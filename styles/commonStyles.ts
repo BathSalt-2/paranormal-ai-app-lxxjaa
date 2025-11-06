@@ -1,17 +1,32 @@
 
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
-// Paranormal Investigation App Colors
+// Or4cl3 AI Solutions - Paranormal Investigation App Colors
 export const colors = {
-  background: '#121212',      // Dark, mysterious
-  text: '#FFFFFF',            // Bright, readable
-  textSecondary: '#A0A0A0',   // Subtle, for less important text
-  primary: '#64FFDA',         // Teal, for highlights and interactive elements
-  secondary: '#BB86FC',       // Purple, for accents
-  accent: '#FF4081',          // Pink, for warnings or special indicators
-  card: '#1E1E1E',            // Slightly lighter than background, for card-like elements
-  highlight: '#292929',       // Even lighter, for selected items
-  backgroundAlt: '#1A1A1A',   // Alternative background
+  background: '#0A0A0F',      // Deep dark blue-black
+  backgroundAlt: '#16213E',   // Dark blue
+  card: '#1E1E2E',            // Dark card background
+  highlight: '#2A2A3E',       // Highlighted elements
+  
+  text: '#FFFFFF',            // Pure white text
+  textSecondary: '#A0A0FF',   // Light purple-blue
+  textTertiary: '#808080',    // Gray text
+  
+  primary: '#00D9FF',         // Cyan/Teal - main brand color
+  secondary: '#7B2FFF',       // Purple - secondary brand
+  accent: '#FF006E',          // Pink/Magenta - accent
+  
+  success: '#64FFDA',         // Teal green
+  warning: '#FFB800',         // Amber
+  danger: '#FF4081',          // Pink red
+  
+  border: 'rgba(0, 217, 255, 0.2)',     // Subtle cyan border
+  borderLight: 'rgba(255, 255, 255, 0.1)', // Light border
+  
+  // Gradient colors
+  gradientStart: '#00D9FF',
+  gradientMiddle: '#7B2FFF',
+  gradientEnd: '#FF006E',
 };
 
 export const buttonStyles = StyleSheet.create({
@@ -24,6 +39,32 @@ export const buttonStyles = StyleSheet.create({
     backgroundColor: colors.backgroundAlt,
     alignSelf: 'center',
     width: '100%',
+  },
+  primaryButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  secondaryButton: {
+    backgroundColor: colors.secondary,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
 });
 
@@ -49,11 +90,21 @@ export const commonStyles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '800',
     textAlign: 'center',
     color: colors.text,
-    marginBottom: 10
+    marginBottom: 10,
+    textShadowColor: colors.primary,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: colors.textSecondary,
+    marginBottom: 8,
   },
   text: {
     fontSize: 16,
@@ -62,6 +113,12 @@ export const commonStyles = StyleSheet.create({
     marginBottom: 8,
     lineHeight: 24,
     textAlign: 'center',
+  },
+  textSecondary: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.textSecondary,
+    lineHeight: 20,
   },
   section: {
     width: '100%',
@@ -75,18 +132,53 @@ export const commonStyles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.card,
-    borderColor: colors.primary,
+    borderColor: colors.border,
     borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
+    borderRadius: 12,
+    padding: 16,
     marginVertical: 8,
     width: '100%',
-    boxShadow: '0px 2px 8px rgba(100, 255, 218, 0.2)',
-    elevation: 2,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  cardHighlight: {
+    backgroundColor: colors.highlight,
+    borderColor: colors.primary,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+    marginVertical: 8,
+    width: '100%',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 5,
   },
   icon: {
     width: 60,
     height: 60,
     tintColor: colors.primary,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.borderLight,
+    width: '100%',
+    marginVertical: 16,
+  },
+  badge: {
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
+  },
+  badgeText: {
+    color: colors.background,
+    fontSize: 12,
+    fontWeight: '700',
   },
 });

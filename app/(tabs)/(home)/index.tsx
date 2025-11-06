@@ -1,179 +1,193 @@
 
 import React from "react";
-import { Stack, Link } from "expo-router";
-import { ScrollView, Pressable, StyleSheet, View, Text, Platform } from "react-native";
+import { ScrollView, Pressable, StyleSheet, View, Text, Platform, Image } from "react-native";
 import { IconSymbol } from "@/components/IconSymbol";
-import { colors } from "@/styles/commonStyles";
 import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "@/styles/commonStyles";
+import { Stack, Link } from "expo-router";
 
 export default function HomeScreen() {
-  const paranormalNews = [
-    {
-      id: '1',
-      title: 'Unexplained EMF Spike Detected',
-      location: 'Abandoned Hospital, Floor 3',
-      time: '2 hours ago',
-      severity: 'high',
-    },
-    {
-      id: '2',
-      title: 'Temperature Anomaly Recorded',
-      location: 'Old Cemetery, Section B',
-      time: '5 hours ago',
-      severity: 'medium',
-    },
-    {
-      id: '3',
-      title: 'EVP Captured on Audio',
-      location: 'Historic Manor, East Wing',
-      time: '1 day ago',
-      severity: 'high',
-    },
-  ];
+  const renderHeaderRight = () => (
+    <Link href="/modal" asChild>
+      <Pressable style={{ marginRight: 15 }}>
+        <IconSymbol name="gear" size={24} color={colors.primary} />
+      </Pressable>
+    </Link>
+  );
 
-  const sensorTools = [
-    {
-      name: 'EMF Detector',
-      route: '/emf',
-      icon: 'bolt.fill',
-      color: colors.primary,
-      description: 'Detect electromagnetic fields',
-    },
-    {
-      name: 'Audio Recorder',
-      route: '/audio',
-      icon: 'waveform',
-      color: colors.secondary,
-      description: 'Capture EVP evidence',
-    },
-    {
-      name: 'Temperature',
-      route: '/temperature',
-      icon: 'thermometer',
-      color: colors.accent,
-      description: 'Monitor cold spots',
-    },
-  ];
+  const renderHeaderLeft = () => (
+    <View style={{ marginLeft: 15 }}>
+      <Image
+        source={require('@/assets/images/0e869168-4039-4065-8048-5b01b4e36179.png')}
+        style={{ width: 32, height: 32 }}
+        resizeMode="contain"
+      />
+    </View>
+  );
 
   const getSeverityColor = (severity: string) => {
-    switch (severity) {
+    switch (severity.toLowerCase()) {
       case 'high':
-        return colors.accent;
+        return colors.danger;
       case 'medium':
-        return '#FFA726';
+        return colors.warning;
       case 'low':
-        return colors.primary;
+        return colors.success;
       default:
         return colors.textSecondary;
     }
   };
 
-  const renderHeaderRight = () => (
-    <Pressable style={styles.headerButtonContainer}>
-      <IconSymbol name="chart.bar.fill" color={colors.primary} size={24} />
-    </Pressable>
-  );
-
-  const renderHeaderLeft = () => (
-    <Pressable style={styles.headerButtonContainer}>
-      <IconSymbol name="gear" color={colors.primary} size={24} />
-    </Pressable>
-  );
-
   return (
     <>
-      {Platform.OS === 'ios' && (
-        <Stack.Screen
-          options={{
-            title: "Paranormal Research",
-            headerRight: renderHeaderRight,
-            headerLeft: renderHeaderLeft,
-            headerStyle: {
-              backgroundColor: colors.background,
-            },
-            headerTintColor: colors.text,
-          }}
-        />
-      )}
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+      <Stack.Screen
+        options={{
+          title: "Paranormal Research",
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
+          headerTintColor: colors.text,
+          headerTitleStyle: {
+            fontWeight: '700',
+            fontSize: 20,
+          },
+          headerRight: renderHeaderRight,
+          headerLeft: renderHeaderLeft,
+          headerShadowVisible: false,
+        }}
+      />
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        {/* Hero Section */}
+        <LinearGradient
+          colors={[colors.primary, colors.secondary, colors.accent]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.heroCard}
         >
-          {/* Hero Section */}
-          <LinearGradient
-            colors={[colors.primary + '40', colors.secondary + '40', colors.accent + '40']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.heroSection}
-          >
-            <IconSymbol name="eye.fill" color={colors.text} size={48} />
-            <Text style={styles.heroTitle}>AI-Powered Investigation</Text>
-            <Text style={styles.heroSubtitle}>
-              Advanced paranormal detection and analysis
-            </Text>
-          </LinearGradient>
+          <Text style={styles.heroTitle}>AI-Powered Investigation</Text>
+          <Text style={styles.heroSubtitle}>Advanced paranormal detection and analysis</Text>
+        </LinearGradient>
 
-          {/* Sensor Suite Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Sensor Suite</Text>
-            <View style={styles.toolsGrid}>
-              {sensorTools.map((tool) => (
-                <Link key={tool.name} href={tool.route as any} asChild>
-                  <Pressable style={styles.toolCard}>
-                    <View style={[styles.toolIconContainer, { backgroundColor: tool.color + '20' }]}>
-                      <IconSymbol name={tool.icon as any} color={tool.color} size={32} />
-                    </View>
-                    <Text style={styles.toolName}>{tool.name}</Text>
-                    <Text style={styles.toolDescription}>{tool.description}</Text>
-                  </Pressable>
-                </Link>
-              ))}
+        {/* Sensor Suite Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Sensor Suite</Text>
+          <View style={styles.sensorGrid}>
+            <Link href="/(tabs)/emf" asChild>
+              <Pressable style={styles.sensorCard}>
+                <LinearGradient
+                  colors={['rgba(0, 217, 255, 0.1)', 'rgba(0, 217, 255, 0.05)']}
+                  style={styles.sensorGradient}
+                >
+                  <IconSymbol name="bolt.fill" size={40} color={colors.primary} />
+                  <Text style={styles.sensorTitle}>EMF Detector</Text>
+                  <Text style={styles.sensorDescription}>Detect electromagnetic fields</Text>
+                </LinearGradient>
+              </Pressable>
+            </Link>
+
+            <Link href="/(tabs)/audio" asChild>
+              <Pressable style={styles.sensorCard}>
+                <LinearGradient
+                  colors={['rgba(123, 47, 255, 0.1)', 'rgba(123, 47, 255, 0.05)']}
+                  style={styles.sensorGradient}
+                >
+                  <IconSymbol name="waveform" size={40} color={colors.secondary} />
+                  <Text style={styles.sensorTitle}>Audio Recorder</Text>
+                  <Text style={styles.sensorDescription}>Capture EVP evidence</Text>
+                </LinearGradient>
+              </Pressable>
+            </Link>
+
+            <Link href="/(tabs)/temperature" asChild>
+              <Pressable style={styles.sensorCard}>
+                <LinearGradient
+                  colors={['rgba(255, 0, 110, 0.1)', 'rgba(255, 0, 110, 0.05)']}
+                  style={styles.sensorGradient}
+                >
+                  <IconSymbol name="thermometer" size={40} color={colors.accent} />
+                  <Text style={styles.sensorTitle}>Temperature</Text>
+                  <Text style={styles.sensorDescription}>Monitor cold spots</Text>
+                </LinearGradient>
+              </Pressable>
+            </Link>
+          </View>
+        </View>
+
+        {/* Recent Activity Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Recent Activity</Text>
+          
+          <View style={styles.activityCard}>
+            <View style={styles.activityHeader}>
+              <View style={[styles.severityBadge, { backgroundColor: getSeverityColor('high') }]}>
+                <Text style={styles.severityText}>HIGH</Text>
+              </View>
+              <Text style={styles.activityTime}>2 hours ago</Text>
+            </View>
+            <Text style={styles.activityTitle}>Unexplained EMF Spike Detected</Text>
+            <View style={styles.activityLocation}>
+              <IconSymbol name="location.fill" size={16} color={colors.textSecondary} />
+              <Text style={styles.activityLocationText}>Abandoned Hospital, Floor 3</Text>
             </View>
           </View>
 
-          {/* Recent Activity Feed */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
-            {paranormalNews.map((news) => (
-              <View key={news.id} style={styles.newsCard}>
-                <View style={styles.newsHeader}>
-                  <View style={[styles.severityIndicator, { backgroundColor: getSeverityColor(news.severity) }]} />
-                  <View style={styles.newsContent}>
-                    <Text style={styles.newsTitle}>{news.title}</Text>
-                    <Text style={styles.newsLocation}>
-                      <IconSymbol name="location.fill" color={colors.textSecondary} size={12} />
-                      {' '}{news.location}
-                    </Text>
-                    <Text style={styles.newsTime}>{news.time}</Text>
-                  </View>
-                </View>
+          <View style={styles.activityCard}>
+            <View style={styles.activityHeader}>
+              <View style={[styles.severityBadge, { backgroundColor: getSeverityColor('medium') }]}>
+                <Text style={styles.severityText}>MEDIUM</Text>
               </View>
-            ))}
-          </View>
-
-          {/* User Profile Overview */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Investigator Profile</Text>
-            <View style={styles.profileCard}>
-              <View style={styles.profileIconContainer}>
-                <IconSymbol name="person.fill" color={colors.primary} size={40} />
-              </View>
-              <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>Lead Investigator</Text>
-                <Text style={styles.profileStats}>
-                  <Text style={styles.profileStatValue}>47</Text> Investigations
-                  {' • '}
-                  <Text style={styles.profileStatValue}>23</Text> Anomalies Detected
-                </Text>
-              </View>
+              <Text style={styles.activityTime}>5 hours ago</Text>
+            </View>
+            <Text style={styles.activityTitle}>Temperature Anomaly Recorded</Text>
+            <View style={styles.activityLocation}>
+              <IconSymbol name="location.fill" size={16} color={colors.textSecondary} />
+              <Text style={styles.activityLocationText}>Old Cemetery, Section B</Text>
             </View>
           </View>
 
-          <View style={{ height: 100 }} />
-        </ScrollView>
-      </View>
+          <View style={styles.activityCard}>
+            <View style={styles.activityHeader}>
+              <View style={[styles.severityBadge, { backgroundColor: getSeverityColor('low') }]}>
+                <Text style={styles.severityText}>LOW</Text>
+              </View>
+              <Text style={styles.activityTime}>1 day ago</Text>
+            </View>
+            <Text style={styles.activityTitle}>EVP Captured on Audio</Text>
+            <View style={styles.activityLocation}>
+              <IconSymbol name="location.fill" size={16} color={colors.textSecondary} />
+              <Text style={styles.activityLocationText}>Historic Manor, East Wing</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Investigator Profile Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Investigator Profile</Text>
+          <View style={styles.profileCard}>
+            <LinearGradient
+              colors={[colors.primary, colors.secondary]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.profileGradient}
+            >
+              <IconSymbol name="person.fill" size={60} color={colors.background} />
+            </LinearGradient>
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName}>Lead Investigator</Text>
+              <Text style={styles.profileStats}>47 Investigations • 23 Anomalies Detected</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Powered By Section */}
+        <View style={styles.poweredBySection}>
+          <Text style={styles.poweredByText}>Powered by</Text>
+          <Text style={styles.poweredByBrand}>Or4cl3 AI Solutions</Text>
+        </View>
+
+        {/* Bottom padding for tab bar */}
+        <View style={{ height: 100 }} />
+      </ScrollView>
     </>
   );
 }
@@ -183,150 +197,163 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  scrollView: {
-    flex: 1,
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  headerButtonContainer: {
-    padding: 8,
-  },
-  heroSection: {
-    borderRadius: 16,
-    padding: 32,
+  heroCard: {
+    borderRadius: 20,
+    padding: 30,
+    marginBottom: 30,
     alignItems: 'center',
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: colors.primary + '40',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   heroTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginTop: 16,
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.background,
+    marginBottom: 8,
     textAlign: 'center',
   },
   heroSubtitle: {
     fontSize: 16,
-    color: colors.textSecondary,
-    marginTop: 8,
+    fontWeight: '600',
+    color: colors.background,
     textAlign: 'center',
+    opacity: 0.9,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 30,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '700',
     color: colors.text,
     marginBottom: 16,
   },
-  toolsGrid: {
+  sensorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
     gap: 12,
+    justifyContent: 'space-between',
   },
-  toolCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
+  sensorCard: {
     width: '48%',
-    alignItems: 'center',
+    borderRadius: 16,
+    overflow: 'hidden',
     borderWidth: 1,
-    borderColor: colors.highlight,
+    borderColor: colors.border,
   },
-  toolIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: 'center',
+  sensorGradient: {
+    padding: 20,
     alignItems: 'center',
-    marginBottom: 12,
+    minHeight: 140,
+    justifyContent: 'center',
   },
-  toolName: {
+  sensorTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.text,
+    marginTop: 12,
     marginBottom: 4,
     textAlign: 'center',
   },
-  toolDescription: {
+  sensorDescription: {
     fontSize: 12,
     color: colors.textSecondary,
     textAlign: 'center',
   },
-  newsCard: {
+  activityCard: {
     backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: colors.highlight,
+    borderColor: colors.border,
   },
-  newsHeader: {
+  activityHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  severityIndicator: {
-    width: 4,
-    height: '100%',
-    borderRadius: 2,
-    marginRight: 12,
+  severityBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
-  newsContent: {
-    flex: 1,
+  severityText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.background,
   },
-  newsTitle: {
+  activityTime: {
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+  activityTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.text,
     marginBottom: 8,
   },
-  newsLocation: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginBottom: 4,
+  activityLocation: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
-  newsTime: {
-    fontSize: 12,
+  activityLocationText: {
+    fontSize: 14,
     color: colors.textSecondary,
   },
   profileCard: {
     backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 16,
     borderWidth: 1,
-    borderColor: colors.highlight,
+    borderColor: colors.border,
   },
-  profileIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: colors.primary + '20',
-    justifyContent: 'center',
+  profileGradient: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: 'center',
-    marginRight: 16,
+    justifyContent: 'center',
   },
   profileInfo: {
     flex: 1,
   },
   profileName: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   profileStats: {
     fontSize: 14,
     color: colors.textSecondary,
   },
-  profileStatValue: {
+  poweredBySection: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  poweredByText: {
+    fontSize: 12,
+    color: colors.textTertiary,
+    marginBottom: 4,
+  },
+  poweredByBrand: {
+    fontSize: 16,
+    fontWeight: '700',
     color: colors.primary,
-    fontWeight: '600',
+    letterSpacing: 1,
   },
 });

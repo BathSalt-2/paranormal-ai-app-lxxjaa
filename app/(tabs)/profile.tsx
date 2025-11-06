@@ -1,205 +1,243 @@
 
-import { useTheme } from "@react-navigation/native";
-import { View, Text, StyleSheet, ScrollView, Platform } from "react-native";
 import React from "react";
+import { View, Text, StyleSheet, ScrollView, Platform, Image, Pressable } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
-import { colors } from "@/styles/commonStyles";
 import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "@/styles/commonStyles";
 
 export default function ProfileScreen() {
   const theme = useTheme();
 
-  const stats = [
-    { label: 'Investigations', value: '47', icon: 'magnifyingglass' },
-    { label: 'Anomalies', value: '23', icon: 'exclamationmark.triangle.fill' },
-    { label: 'EVP Captured', value: '12', icon: 'waveform' },
-    { label: 'Cold Spots', value: '8', icon: 'thermometer' },
-  ];
-
-  const achievements = [
-    { title: 'First Investigation', description: 'Complete your first paranormal investigation', unlocked: true },
-    { title: 'EMF Expert', description: 'Log 50 EMF readings', unlocked: true },
-    { title: 'EVP Hunter', description: 'Capture 10 audio recordings', unlocked: true },
-    { title: 'Cold Spot Detective', description: 'Detect 5 temperature anomalies', unlocked: false },
-  ];
-
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Profile Header */}
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      {/* Profile Header */}
+      <View style={styles.header}>
         <LinearGradient
-          colors={[colors.primary + '40', colors.secondary + '40']}
-          style={styles.headerCard}
+          colors={[colors.primary, colors.secondary]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.avatarGradient}
         >
-          <View style={styles.avatarContainer}>
-            <IconSymbol name="person.fill" color={colors.text} size={48} />
-          </View>
-          <Text style={styles.nameText}>Lead Investigator</Text>
-          <Text style={styles.roleText}>Paranormal Researcher</Text>
+          <IconSymbol name="person.fill" size={60} color={colors.background} />
         </LinearGradient>
+        <Text style={styles.name}>Lead Investigator</Text>
+        <Text style={styles.role}>Paranormal Researcher</Text>
+      </View>
 
-        {/* Stats Grid */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Statistics</Text>
-          <View style={styles.statsGrid}>
-            {stats.map((stat, index) => (
-              <View key={index} style={styles.statCard}>
-                <IconSymbol name={stat.icon as any} color={colors.primary} size={28} />
-                <Text style={styles.statValue}>{stat.value}</Text>
-                <Text style={styles.statLabel}>{stat.label}</Text>
-              </View>
-            ))}
+      {/* Stats Section */}
+      <View style={styles.statsContainer}>
+        <View style={styles.statCard}>
+          <Text style={styles.statValue}>47</Text>
+          <Text style={styles.statLabel}>Investigations</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Text style={styles.statValue}>23</Text>
+          <Text style={styles.statLabel}>Anomalies</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Text style={styles.statValue}>156</Text>
+          <Text style={styles.statLabel}>Hours</Text>
+        </View>
+      </View>
+
+      {/* Achievements Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Achievements</Text>
+        
+        <View style={styles.achievementCard}>
+          <LinearGradient
+            colors={['rgba(0, 217, 255, 0.2)', 'rgba(0, 217, 255, 0.05)']}
+            style={styles.achievementGradient}
+          >
+            <IconSymbol name="star.fill" size={32} color={colors.primary} />
+            <View style={styles.achievementInfo}>
+              <Text style={styles.achievementTitle}>First Contact</Text>
+              <Text style={styles.achievementDescription}>Captured your first EVP</Text>
+            </View>
+          </LinearGradient>
+        </View>
+
+        <View style={styles.achievementCard}>
+          <LinearGradient
+            colors={['rgba(123, 47, 255, 0.2)', 'rgba(123, 47, 255, 0.05)']}
+            style={styles.achievementGradient}
+          >
+            <IconSymbol name="bolt.fill" size={32} color={colors.secondary} />
+            <View style={styles.achievementInfo}>
+              <Text style={styles.achievementTitle}>EMF Master</Text>
+              <Text style={styles.achievementDescription}>Detected 50 EMF anomalies</Text>
+            </View>
+          </LinearGradient>
+        </View>
+
+        <View style={styles.achievementCard}>
+          <LinearGradient
+            colors={['rgba(255, 0, 110, 0.2)', 'rgba(255, 0, 110, 0.05)']}
+            style={styles.achievementGradient}
+          >
+            <IconSymbol name="thermometer" size={32} color={colors.accent} />
+            <View style={styles.achievementInfo}>
+              <Text style={styles.achievementTitle}>Cold Spot Hunter</Text>
+              <Text style={styles.achievementDescription}>Found 25 temperature anomalies</Text>
+            </View>
+          </LinearGradient>
+        </View>
+      </View>
+
+      {/* Equipment Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Equipment</Text>
+        
+        <View style={styles.equipmentCard}>
+          <IconSymbol name="bolt.fill" size={24} color={colors.primary} />
+          <View style={styles.equipmentInfo}>
+            <Text style={styles.equipmentName}>EMF Detector Pro</Text>
+            <Text style={styles.equipmentStatus}>Active</Text>
           </View>
         </View>
 
-        {/* Achievements */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Achievements</Text>
-          {achievements.map((achievement, index) => (
-            <View key={index} style={styles.achievementCard}>
-              <View style={[styles.achievementIcon, !achievement.unlocked && styles.achievementIconLocked]}>
-                <IconSymbol
-                  name={achievement.unlocked ? 'star.fill' : 'star'}
-                  color={achievement.unlocked ? colors.primary : colors.textSecondary}
-                  size={24}
-                />
-              </View>
-              <View style={styles.achievementContent}>
-                <Text style={[styles.achievementTitle, !achievement.unlocked && styles.achievementTitleLocked]}>
-                  {achievement.title}
-                </Text>
-                <Text style={styles.achievementDescription}>{achievement.description}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        {/* Equipment */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Equipment</Text>
-          <View style={styles.equipmentCard}>
-            <View style={styles.equipmentRow}>
-              <IconSymbol name="bolt.fill" color={colors.primary} size={20} />
-              <Text style={styles.equipmentText}>EMF Detector - Active</Text>
-            </View>
-            <View style={styles.equipmentRow}>
-              <IconSymbol name="waveform" color={colors.secondary} size={20} />
-              <Text style={styles.equipmentText}>Audio Recorder - Active</Text>
-            </View>
-            <View style={styles.equipmentRow}>
-              <IconSymbol name="thermometer" color={colors.accent} size={20} />
-              <Text style={styles.equipmentText}>Temperature Monitor - Active</Text>
-            </View>
+        <View style={styles.equipmentCard}>
+          <IconSymbol name="waveform" size={24} color={colors.secondary} />
+          <View style={styles.equipmentInfo}>
+            <Text style={styles.equipmentName}>Digital Audio Recorder</Text>
+            <Text style={styles.equipmentStatus}>Active</Text>
           </View>
         </View>
 
-        <View style={{ height: 100 }} />
-      </ScrollView>
-    </View>
+        <View style={styles.equipmentCard}>
+          <IconSymbol name="thermometer" size={24} color={colors.accent} />
+          <View style={styles.equipmentInfo}>
+            <Text style={styles.equipmentName}>Thermal Scanner</Text>
+            <Text style={styles.equipmentStatus}>Active</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Settings Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Settings</Text>
+        
+        <Pressable style={styles.settingItem}>
+          <IconSymbol name="bell.fill" size={24} color={colors.text} />
+          <Text style={styles.settingText}>Notifications</Text>
+          <IconSymbol name="chevron.right" size={20} color={colors.textSecondary} />
+        </Pressable>
+
+        <Pressable style={styles.settingItem}>
+          <IconSymbol name="gear" size={24} color={colors.text} />
+          <Text style={styles.settingText}>Preferences</Text>
+          <IconSymbol name="chevron.right" size={20} color={colors.textSecondary} />
+        </Pressable>
+
+        <Pressable style={styles.settingItem}>
+          <IconSymbol name="info.circle" size={24} color={colors.text} />
+          <Text style={styles.settingText}>About</Text>
+          <IconSymbol name="chevron.right" size={20} color={colors.textSecondary} />
+        </Pressable>
+      </View>
+
+      {/* Branding Section */}
+      <View style={styles.brandingSection}>
+        <Image
+          source={require('@/assets/images/0e869168-4039-4065-8048-5b01b4e36179.png')}
+          style={styles.brandLogo}
+          resizeMode="contain"
+        />
+        <Text style={styles.brandText}>Or4cl3 AI Solutions</Text>
+        <Text style={styles.brandTagline}>Advanced Paranormal Research Technology</Text>
+      </View>
+
+      {/* Bottom padding for tab bar */}
+      <View style={{ height: 100 }} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
-  scrollView: {
-    flex: 1,
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
-  scrollContent: {
-    padding: 16,
-  },
-  headerCard: {
-    borderRadius: 16,
-    padding: 32,
+  header: {
     alignItems: 'center',
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: colors.highlight,
+    marginBottom: 30,
   },
-  avatarContainer: {
+  avatarGradient: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.card,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
-    borderWidth: 3,
-    borderColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  nameText: {
+  name: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: colors.text,
     marginBottom: 4,
   },
-  roleText: {
+  role: {
     fontSize: 16,
     color: colors.textSecondary,
   },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 16,
-  },
-  statsGrid: {
+  statsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 30,
     gap: 12,
   },
   statCard: {
+    flex: 1,
     backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
-    width: '48%',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.highlight,
+    borderColor: colors.border,
   },
   statValue: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginTop: 8,
+    fontWeight: '700',
+    color: colors.primary,
+    marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
     color: colors.textSecondary,
-    marginTop: 4,
-    textAlign: 'center',
+  },
+  section: {
+    marginBottom: 30,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 16,
   },
   achievementCard: {
-    backgroundColor: colors.card,
     borderRadius: 12,
-    padding: 16,
     marginBottom: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  achievementGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.highlight,
+    padding: 16,
+    gap: 16,
   },
-  achievementIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.primary + '20',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  achievementIconLocked: {
-    backgroundColor: colors.highlight,
-  },
-  achievementContent: {
+  achievementInfo: {
     flex: 1,
   },
   achievementTitle: {
@@ -207,9 +245,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
     marginBottom: 4,
-  },
-  achievementTitleLocked: {
-    color: colors.textSecondary,
   },
   achievementDescription: {
     fontSize: 14,
@@ -219,17 +254,68 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
-    borderWidth: 1,
-    borderColor: colors.highlight,
-    gap: 12,
-  },
-  equipmentRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  equipmentText: {
+  equipmentInfo: {
+    flex: 1,
+  },
+  equipmentName: {
     fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
+    marginBottom: 4,
+  },
+  equipmentStatus: {
+    fontSize: 14,
+    color: colors.success,
+  },
+  settingItem: {
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  settingText: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  brandingSection: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+    padding: 20,
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  brandLogo: {
+    width: 80,
+    height: 80,
+    marginBottom: 12,
+  },
+  brandText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.primary,
+    marginBottom: 4,
+    letterSpacing: 1,
+  },
+  brandTagline: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
 });

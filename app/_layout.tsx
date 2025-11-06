@@ -1,3 +1,4 @@
+
 import "react-native-reanimated";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
@@ -21,7 +22,7 @@ import { WidgetProvider } from "@/contexts/WidgetContext";
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: "index",
 };
 
 export default function RootLayout() {
@@ -57,7 +58,7 @@ export default function RootLayout() {
     ...DefaultTheme,
     dark: false,
     colors: {
-      primary: "rgb(0, 122, 255)", // System Blue
+      primary: "rgb(0, 217, 255)", // Cyan/Teal
       background: "rgb(242, 242, 247)", // Light mode background
       card: "rgb(255, 255, 255)", // White cards/surfaces
       text: "rgb(0, 0, 0)", // Black text for light mode
@@ -69,8 +70,8 @@ export default function RootLayout() {
   const CustomDarkTheme: Theme = {
     ...DarkTheme,
     colors: {
-      primary: "rgb(10, 132, 255)", // System Blue (Dark Mode)
-      background: "rgb(1, 1, 1)", // True black background for OLED displays
+      primary: "rgb(0, 217, 255)", // Cyan/Teal
+      background: "rgb(10, 10, 15)", // Dark background
       card: "rgb(28, 28, 30)", // Dark card/surface color
       text: "rgb(255, 255, 255)", // White text for dark mode
       border: "rgb(44, 44, 46)", // Dark gray for separators/borders
@@ -86,6 +87,9 @@ export default function RootLayout() {
           <WidgetProvider>
             <GestureHandlerRootView>
             <Stack>
+              {/* Landing Page */}
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+
               {/* Main app with tabs */}
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
