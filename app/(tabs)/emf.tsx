@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Platform, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Magnetometer } from 'expo-sensors';
 import { IconSymbol } from '@/components/IconSymbol';
@@ -22,8 +22,14 @@ export default function EMFScreen() {
   const [currentReading, setCurrentReading] = useState<EMFReading | null>(null);
   const [readings, setReadings] = useState<EMFReading[]>([]);
   const [subscription, setSubscription] = useState<any>(null);
+  const [sensorAvailable, setSensorAvailable] = useState<boolean | null>(null);
   
   const pulseScale = useSharedValue(1);
+
+  // Check sensor availability on mount
+  useEffect(() => {
+    checkSensorAvailability();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -33,32 +39,92 @@ export default function EMFScreen() {
     };
   }, [subscription]);
 
+  const checkSensorAvailability = async () => {
+    try {
+      const available = await Magnetometer.isAvailableAsync();
+      console.log('Magnetometer available:', available);
+      setSensorAvailable(available);
+      
+      if (!available) {
+        console.log('Magnetometer not available on this device');
+      }
+    } catch (error) {
+      console.error('Error checking magnetometer availability:', error);
+      setSensorAvailable(false);
+    }
+  };
+
   const calculateMagnitude = (x: number, y: number, z: number) => {
     return Math.sqrt(x * x + y * y + z * z);
   };
 
-  const startRecording = () => {
+  const startRecording = async () => {
     console.log('Starting EMF recording');
-    setIsRecording(true);
     
-    const sub = Magnetometer.addListener((data) => {
-      const magnitude = calculateMagnitude(data.x, data.y, data.z);
-      const reading: EMFReading = {
-        x: data.x,
-        y: data.y,
-        z: data.z,
-        magnitude,
-        timestamp: new Date(),
-      };
+    // Check if sensor is available
+    if (sensorAvailable === false) {
+      Alert.alert(
+        'Sensor Not Available',
+        'The magnetometer sensor is not available on this device. EMF detection requires a device with a magnetometer sensor.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    if (sensorAvailable === null) {
+      Alert.alert(
+        'Checking Sensor',
+        'Please wait while we check sensor availability...',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    try {
+      // Request permissions
+      const { status } = await Magnetometer.requestPermissionsAsync();
       
-      setCurrentReading(reading);
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'Magnetometer permission is required to detect electromagnetic fields.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+
+      setIsRecording(true);
       
-      // Pulse animation based on magnitude
-      pulseScale.value = withSpring(1 + (magnitude / 100));
-    });
-    
-    Magnetometer.setUpdateInterval(100);
-    setSubscription(sub);
+      // Add listener
+      const sub = Magnetometer.addListener((data) => {
+        const magnitude = calculateMagnitude(data.x, data.y, data.z);
+        const reading: EMFReading = {
+          x: data.x,
+          y: data.y,
+          z: data.z,
+          magnitude,
+          timestamp: new Date(),
+        };
+        
+        setCurrentReading(reading);
+        
+        // Pulse animation based on magnitude
+        pulseScale.value = withSpring(1 + (magnitude / 100));
+      });
+      
+      Magnetometer.setUpdateInterval(100);
+      setSubscription(sub);
+      
+      console.log('EMF recording started successfully');
+    } catch (error) {
+      console.error('Error starting EMF recording:', error);
+      Alert.alert(
+        'Error',
+        'Failed to start EMF recording. Please try again.',
+        [{ text: 'OK' }]
+      );
+      setIsRecording(false);
+    }
   };
 
   const stopRecording = () => {
@@ -114,6 +180,19 @@ export default function EMFScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* Sensor Status Warning */}
+          {sensorAvailable === false && (
+            <View style={styles.warningCard}>
+              <IconSymbol name="exclamationmark.triangle.fill" color={colors.accent} size={24} />
+              <View style={styles.warningContent}>
+                <Text style={styles.warningTitle}>Sensor Not Available</Text>
+                <Text style={styles.warningText}>
+                  This device does not have a magnetometer sensor. EMF detection requires a physical magnetometer sensor which is typically found on mobile devices but not on web browsers.
+                </Text>
+              </View>
+            </View>
+          )}
+
           {/* EMF Display */}
           <LinearGradient
             colors={[colors.primary + '20', colors.secondary + '20']}
@@ -156,15 +235,23 @@ export default function EMFScreen() {
           {/* Controls */}
           <View style={styles.controlsContainer}>
             <Pressable
-              style={[styles.controlButton, isRecording && styles.controlButtonActive]}
+              style={[
+                styles.controlButton, 
+                isRecording && styles.controlButtonActive,
+                sensorAvailable === false && styles.controlButtonDisabled
+              ]}
               onPress={isRecording ? stopRecording : startRecording}
+              disabled={sensorAvailable === false}
             >
               <IconSymbol
                 name={isRecording ? 'stop.fill' : 'play.fill'}
-                color={colors.background}
+                color={sensorAvailable === false ? colors.textSecondary : colors.background}
                 size={24}
               />
-              <Text style={styles.controlButtonText}>
+              <Text style={[
+                styles.controlButtonText,
+                sensorAvailable === false && styles.controlButtonTextDisabled
+              ]}>
                 {isRecording ? 'Stop Recording' : 'Start Recording'}
               </Text>
             </Pressable>
@@ -177,6 +264,15 @@ export default function EMFScreen() {
             )}
           </View>
 
+          {/* EMF Info */}
+          <View style={styles.infoCard}>
+            <Text style={styles.infoTitle}>About EMF Detection</Text>
+            <Text style={styles.infoText}>
+              Electromagnetic Field (EMF) detection uses your device&apos;s magnetometer to measure magnetic field strength in microteslas (µT). 
+              Paranormal investigators believe that spirits can manipulate electromagnetic fields, making EMF spikes potential indicators of paranormal activity.
+            </Text>
+          </View>
+
           {/* AI Analysis Placeholder */}
           <View style={styles.aiCard}>
             <View style={styles.aiHeader}>
@@ -185,8 +281,8 @@ export default function EMFScreen() {
             </View>
             <Text style={styles.aiText}>
               {isRecording
-                ? 'Analyzing electromagnetic field patterns... AI detection algorithms are monitoring for anomalies.'
-                : 'Start recording to enable AI-powered analysis of EMF patterns and anomaly detection.'}
+                ? 'Analyzing electromagnetic field patterns... AI detection algorithms are monitoring for anomalies and unusual fluctuations that may indicate paranormal activity.'
+                : 'Start recording to enable AI-powered analysis of EMF patterns and anomaly detection. The AI will learn baseline readings and alert you to significant deviations.'}
             </Text>
           </View>
 
@@ -232,6 +328,30 @@ const styles = StyleSheet.create({
   },
   headerButton: {
     padding: 8,
+  },
+  warningCard: {
+    backgroundColor: colors.accent + '20',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    flexDirection: 'row',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: colors.accent,
+  },
+  warningContent: {
+    flex: 1,
+  },
+  warningTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.accent,
+    marginBottom: 4,
+  },
+  warningText: {
+    fontSize: 14,
+    color: colors.text,
+    lineHeight: 20,
   },
   displayCard: {
     borderRadius: 16,
@@ -312,10 +432,17 @@ const styles = StyleSheet.create({
   controlButtonActive: {
     backgroundColor: colors.accent,
   },
+  controlButtonDisabled: {
+    backgroundColor: colors.card,
+    opacity: 0.5,
+  },
   controlButtonText: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.background,
+  },
+  controlButtonTextDisabled: {
+    color: colors.textSecondary,
   },
   logButton: {
     backgroundColor: colors.secondary,
@@ -330,6 +457,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.background,
+  },
+  infoCard: {
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.highlight,
+  },
+  infoTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  infoText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
   },
   aiCard: {
     backgroundColor: colors.card,
